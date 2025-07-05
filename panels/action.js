@@ -213,9 +213,8 @@ async function runBrowseFetch(panel) {
   }
 }
 
-
-// SEND ALL → real qBittorrent API calls
-// Replace your old sendAll(...) with this
+// ─────────────────────────────────────────────────────────────────────────────
+// Replace your old sendAll(...) with this:
 
 async function sendAll(panel) {
   const status  = panel.querySelector("#status-line");
@@ -227,7 +226,7 @@ async function sendAll(panel) {
     return;
   }
 
-  // load your YTS settings
+  // load YTS settings
   const [
     category,
     groupByYear,
@@ -242,11 +241,11 @@ async function sendAll(panel) {
 
   // helper to compute decade folder
   function decadeFolder(year) {
-    const y = parseInt(year, 10);
+    const y = parseInt(year,10);
     if (isNaN(y)) return null;
-    const start = Math.floor(y / 10) * 10;
-    const end   = (start + 10 < new Date().getFullYear())
-                ? start + 10
+    const start = Math.floor(y/10)*10;
+    const end   = (start+10 < new Date().getFullYear())
+                ? start+10
                 : "now";
     return `${start}-${end}`;
   }
@@ -256,14 +255,14 @@ async function sendAll(panel) {
 
   for (let magnet of magnets) {
     try {
-      // parse dn=… for title & year
-      const url = new URL(magnet);
-      const dn  = decodeURIComponent(url.searchParams.get("dn") || "");
-      const parts = dn.split(" [");
-      const title = parts[0];
-      const year  = (dn.match(/(19|20)\d{2}/) || [])[0] || "";
+      // parse title & year from dn=… param
+      const url  = new URL(magnet);
+      const dn   = decodeURIComponent(url.searchParams.get("dn")||"");
+      const parts= dn.split(" [");
+      const title= parts[0];
+      const year = (dn.match(/(19|20)\d{2}/)||[])[0]||"";
 
-      // build savepath: "category[/decade]"
+      // build savepath
       let savepath = "";
       if (category) {
         savepath += category;
@@ -276,25 +275,25 @@ async function sendAll(panel) {
         if (dec) savepath = dec;
       }
 
-      // push to qBittorrent
+      // send as magnet or .torrent
       if (fileType === "magnet") {
         await QBittorrent.addTorrent(magnet, savepath);
       } else {
-        // fetch .torrent file from YTS
+        // fetch .torrent from YTS
         const hi = magnet.match(/xt=urn:btih:([A-F0-9]+)/i);
-        if (!hi) throw new Error("Invalid magnet");
+        if (!hi) throw new Error("No hash");
         const torrentUrl = `https://yts.mx/torrent/download/${hi[1]}`;
         const resp       = await fetch(torrentUrl);
-        if (!resp.ok) throw new Error("Torrent fetch failed");
-        const blob  = await resp.blob();
-        const fname = title.replace(/[\/:*?"<>|]/g, "") + ".torrent";
+        if (!resp.ok) throw new Error("Fetch failed");
+        const blob = await resp.blob();
+        const fname = title.replace(/[\/:*?"<>|]/g,"") + ".torrent";
         await QBittorrent.addTorrentFile(blob, fname, savepath);
       }
 
       sent++;
     }
     catch (e) {
-      console.error("❌ sendAll failed:", e);
+      console.error("❌ sendAll error", e);
       fail++;
     }
     status.textContent = `Sent ${sent}/${magnets.length}, failed ${fail}`;
@@ -302,7 +301,7 @@ async function sendAll(panel) {
 
   status.textContent = `Done. Sent ${sent}, failed ${fail}.`;
 }
-
+// ─────────────────────────────────────────────────────────────────────────────
 
 // HELPERS
 
