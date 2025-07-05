@@ -213,6 +213,7 @@ async function runBrowseFetch(panel) {
   }
 }
 
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Replace your old sendAll(...) with this:
 
@@ -263,33 +264,27 @@ async function sendAll(panel) {
       const year = (dn.match(/(19|20)\d{2}/)||[])[0]||"";
 
       // build savepath
-      let savepath = "";
-      if (category) {
-        savepath += category;
-        if (groupByYear && year) {
-          const dec = decadeFolder(year);
-          if (dec) savepath += "/" + dec;
-        }
-      } else if (groupByYear && year) {
-        const dec = decadeFolder(year);
-        if (dec) savepath = dec;
-      }
+  let savepath = "";
+  if (groupByYear && year) {
+    const dec = decadeFolder(year);
+    if (dec) savepath = dec;
+  }
 
-      // send as magnet or .torrent
-      if (fileType === "magnet") {
-        await QBittorrent.addTorrent(magnet, savepath);
-      } else {
-        // fetch .torrent from YTS
-        const hi = magnet.match(/xt=urn:btih:([A-F0-9]+)/i);
-        if (!hi) throw new Error("No hash");
-        const torrentUrl = `https://yts.mx/torrent/download/${hi[1]}`;
-        const resp       = await fetch(torrentUrl);
-        if (!resp.ok) throw new Error("Fetch failed");
-        const blob = await resp.blob();
-        const fname = title.replace(/[\/:*?"<>|]/g,"") + ".torrent";
-        await QBittorrent.addTorrentFile(blob, fname, savepath);
-      }
 
+// send as magnet or .torrent, with category
+if (fileType === "magnet") {
+  await QBittorrent.addTorrent(magnet, savepath, category);
+} else {
+  // fetch .torrent from YTS
+  const hi = magnet.match(/xt=urn:btih:([A-F0-9]+)/i);
+  if (!hi) throw new Error("No hash");
+  const torrentUrl = `https://yts.mx/torrent/download/${hi[1]}`;
+  const resp       = await fetch(torrentUrl);
+  if (!resp.ok) throw new Error("Fetch failed");
+  const blob = await resp.blob();
+  const fname = title.replace(/[\/:*?"<>|]/g,"") + ".torrent";
+  await QBittorrent.addTorrentFile(blob, fname, savepath, category);
+}
       sent++;
     }
     catch (e) {
@@ -302,6 +297,7 @@ async function sendAll(panel) {
   status.textContent = `Done. Sent ${sent}, failed ${fail}.`;
 }
 // ─────────────────────────────────────────────────────────────────────────────
+
 
 // HELPERS
 
