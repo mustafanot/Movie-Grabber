@@ -1,0 +1,40 @@
+/* popup.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 400px;        /* wider popup */
+  min-height: 500px;   /* taller popup */
+  font-family: sans-serif;
+  background: #fafafa;
+  color: #222;
+  box-sizing: border-box;
+}
+
+#main-menu {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+#main-menu button {
+  flex: 1;
+  padding: 0.6em;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+}
+
+#main-menu button.active {
+  background: #ddd;
+}
+
+.tab-panel {
+  display: none;
+  padding: 1em;
+  box-sizing: border-box;
+  height: calc(100% - 3.2em);  /* fill remaining height */
+  overflow-y: auto;
+}
+
+.tab-panel.active {
+  display: block;
+}

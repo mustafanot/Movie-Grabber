@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Movie Grabber Popup</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <nav id="main-menu">
+    <button data-tab="action" class="active">Action</button>
+    <button data-tab="reports">Reports</button>
+    <button data-tab="settings">Settings</button>
+    <button data-tab="about">About</button>
+  </nav>
+
+  <section id="panels">
+    <div id="action-panel"   class="tab-panel active"></div>
+    <div id="reports-panel"  class="tab-panel"></div>
+    <div id="settings-panel" class="tab-panel"></div>
+    <div id="about-panel"    class="tab-panel"></div>
+  </section>
+
+  <!-- Load utilities -->
+  <script src="utils/storage.js"></script>
+  <script src="utils/clipboard.js"></script>
+  <script src="utils/qbittorrent.js"></script>
+
+  <!-- Load each panel’s initializer -->
+  <script src="panels/action.js"></script>
+  <script src="panels/reports.js"></script>
+  <script src="panels/settings.js"></script>
+  <script src="panels/about.js"></script>
+
+  <!-- Finally, the popup bootstrap -->
+  <script src="popup.js"></script>
+</body>
+</html>

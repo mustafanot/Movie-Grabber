@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Movie Grabber",
+  "version": "1.0.0",
+  "description": "Grab torrents & magnets from movies – popup UI",
+  "permissions": [
+    "storage",
+    "clipboardWrite",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": "icons/icon-48.png",
+    "default_title": "Movie Grabber",
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    "popup.html",
+    "popup.css",
+    "popup.js",
+    "utils/*.js",
+    "panels/*.js"
+  ]
+}
